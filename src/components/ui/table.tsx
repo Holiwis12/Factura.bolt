@@ -1,106 +1,50 @@
-import * as React from 'react'
+interface TableProps {
+  children: React.ReactNode
+  className?: string
+}
 
-const Table = React.forwardRef<
-  HTMLTableElement,
-  React.HTMLAttributes<HTMLTableElement>
->(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
-    <table
-      ref={ref}
-      className={`w-full caption-bottom text-sm ${className}`}
-      {...props}
-    />
-  </div>
-))
-Table.displayName = 'Table'
+export function Table({ children, className = '' }: TableProps) {
+  return (
+    <div className="w-full overflow-auto">
+      <table className={`w-full caption-bottom text-sm ${className}`}>
+        {children}
+      </table>
+    </div>
+  )
+}
 
-const TableHeader = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <thead ref={ref} className={className} {...props} />
-))
-TableHeader.displayName = 'TableHeader'
+Table.Header = function TableHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <thead className="border-b border-border bg-muted">
+      {children}
+    </thead>
+  )
+}
 
-const TableBody = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tbody
-    ref={ref}
-    className={`[&_tr:last-child]:border-0 ${className}`}
-    {...props}
-  />
-))
-TableBody.displayName = 'TableBody'
+Table.Body = function TableBody({ children }: { children: React.ReactNode }) {
+  return <tbody>{children}</tbody>
+}
 
-const TableFooter = React.forwardRef<
-  HTMLTableSectionElement,
-  React.HTMLAttributes<HTMLTableSectionElement>
->(({ className, ...props }, ref) => (
-  <tfoot
-    ref={ref}
-    className={`bg-primary font-medium text-primary-foreground ${className}`}
-    {...props}
-  />
-))
-TableFooter.displayName = 'TableFooter'
+Table.Row = function TableRow({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <tr className={`border-b border-border transition-colors hover:bg-muted/50 ${className}`}>
+      {children}
+    </tr>
+  )
+}
 
-const TableRow = React.forwardRef<
-  HTMLTableRowElement,
-  React.HTMLAttributes<HTMLTableRowElement>
->(({ className, ...props }, ref) => (
-  <tr
-    ref={ref}
-    className={`border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted ${className}`}
-    {...props}
-  />
-))
-TableRow.displayName = 'TableRow'
+Table.Head = function TableHead({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <th className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground ${className}`}>
+      {children}
+    </th>
+  )
+}
 
-const TableHead = React.forwardRef<
-  HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={`h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 ${className}`}
-    {...props}
-  />
-))
-TableHead.displayName = 'TableHead'
-
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={`p-4 align-middle [&:has([role=checkbox])]:pr-0 ${className}`}
-    {...props}
-  />
-))
-TableCell.displayName = 'TableCell'
-
-const TableCaption = React.forwardRef<
-  HTMLTableCaptionElement,
-  React.HTMLAttributes<HTMLTableCaptionElement>
->(({ className, ...props }, ref) => (
-  <caption
-    ref={ref}
-    className={`mt-4 text-sm text-muted-foreground ${className}`}
-    {...props}
-  />
-))
-TableCaption.displayName = 'TableCaption'
-
-export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableFooter,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableCaption,
+Table.Cell = function TableCell({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return (
+    <td className={`p-4 align-middle ${className}`}>
+      {children}
+    </td>
+  )
 }
