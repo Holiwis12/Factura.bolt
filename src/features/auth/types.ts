@@ -1,9 +1,14 @@
-import { User, ApiResponse } from '@/lib/types';
-
-export interface AuthState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'company';
+  companyId?: string | null;
+  companyName?: string | null;
+  isDemo?: boolean;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface LoginCredentials {
@@ -11,15 +16,21 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthResponse extends ApiResponse<User> {
+export interface AuthResponse {
+  data?: User;
+  error?: string;
+  status: number;
   token?: string;
 }
 
-export interface AuthContextType {
+export interface AuthState {
   user: User | null;
   loading: boolean;
   error: string | null;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  loginAsDemo: () => void;
+}
+
+export interface AuthContextType extends AuthState {
+  login: (email: string, password: string) => Promise<void>;
+  loginAsDemo: () => Promise<void>;
   logout: () => Promise<void>;
 }

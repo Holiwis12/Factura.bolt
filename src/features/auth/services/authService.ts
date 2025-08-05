@@ -8,7 +8,7 @@ const DEMO_COMPANY_USER: User = {
   id: 'demo-company-001',
   name: 'María González',
   email: 'demo@empresa.com',
-  role: 'demo',
+  role: 'company',
   companyId: 'company-demo-001',
   companyName: 'Empresa Demo S.A.C.',
   isDemo: true,
@@ -17,29 +17,61 @@ const DEMO_COMPANY_USER: User = {
   updated_at: new Date().toISOString()
 };
 
-// Credenciales del usuario demo
-const DEMO_CREDENTIALS = {
-  email: 'demo@empresa.com',
-  password: 'demo123'
-};
+// Usuarios locales para desarrollo
+const LOCAL_USERS = [
+  {
+    email: 'admin@sistema.com',
+    password: 'admin123',
+    user: {
+      id: 'admin-001',
+      name: 'Administrador Sistema',
+      email: 'admin@sistema.com',
+      role: 'admin' as const,
+      companyId: null,
+      companyName: null,
+      isDemo: false,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  },
+  {
+    email: 'empresa@test.com',
+    password: 'empresa123',
+    user: {
+      id: 'company-001',
+      name: 'Usuario Empresa',
+      email: 'empresa@test.com',
+      role: 'company' as const,
+      companyId: 'company-001',
+      companyName: 'Empresa Test S.A.C.',
+      isDemo: false,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  }
+];
 
 export const authService = {
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
     try {
-      // Verificar si son las credenciales del usuario demo
-      if (credentials.email === DEMO_CREDENTIALS.email && 
-          credentials.password === DEMO_CREDENTIALS.password) {
-        
-        // Guardar usuario demo en localStorage
-        storage.set(APP_CONFIG.storage.demoUserKey, DEMO_COMPANY_USER);
-        
+      // Simular delay para UX
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Buscar usuario local primero
+      const localUser = LOCAL_USERS.find(
+        u => u.email === credentials.email && u.password === credentials.password
+      );
+
+      if (localUser) {
         return {
-          data: DEMO_COMPANY_USER,
+          data: localUser.user,
           status: 200
         };
       }
 
-      // Si no es demo, intentar con Supabase para usuarios reales
+      // Si no es usuario local, intentar con Supabase
       const { data, error } = await supabase.auth.signInWithPassword(credentials);
       
       if (error) throw error;
@@ -83,65 +115,86 @@ export const authService = {
     }
   },
 
-  loginAsDemo: (): AuthResponse => {
-    storage.set(APP_CONFIG.storage.demoUserKey, DEMO_COMPANY_USER);
-    return {
-      data: DEMO_COMPANY_USER,
-      status: 200
-    };
+  loginAsDemo: async (): Promise<AuthResponse> => {
+    try {
+      // Simular delay para UX
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Guardar usuario demo en localStorage
+      storage.set(APP_CONFIG.storage.demoUserKey, DEMO_COMPANY_USER);
+      
+      return {
+        data: DEMO_COMPANY_USER,
+        status: 200
+      };
+    } catch (error) {
+      return {
+        error: 'Error al acceder al modo demo',
+        status: 500
+      };
+    }
   },
 
   logout: async (): Promise<void> => {
-    // Verificar si es usuario demo
-    const demoUser = storage.get(APP_CONFIG.storage.demoUserKey);
-    
-    if (demoUser) {
-      // Solo limpiar localStorage para usuario demo
-      storage.remove(APP_CONFIG.storage.demoUserKey);
-      return;
+    try {
+      // Verificar si es usuario demo
+      const demoUser = storage.get(APP_CONFIG.storage.demoUserKey);
+      
+      if (demoUser) {
+        // Solo limpiar localStorage para usuario demo
+        storage.remove(APP_CONFIG.storage.demoUserKey);
+        return;
+      }
+      
+      // Cerrar sesión de Supabase para usuarios reales
+      await supabase.auth.signOut();
+    } catch (error) {
+      console.error('Error during logout:', error);
     }
-    
-    // Cerrar sesión de Supabase para usuarios reales
-    await supabase.auth.signOut();
   },
 
   getCurrentUser: async (): Promise<User | null> => {
-    // Primero verificar si hay usuario demo en localStorage
-    const demoUser = storage.get<User>(APP_CONFIG.storage.demoUserKey);
-    if (demoUser) {
-      return demoUser;
+    try {
+      // Primero verificar si hay usuario demo en localStorage
+      const demoUser = storage.get<User>(APP_CONFIG.storage.demoUserKey);
+      if (demoUser) {
+        return demoUser;
+      }
+
+      // Si no es demo, verificar sesión de Supabase
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return null;
+
+      // Obtener perfil del usuario real
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select(`
+          *,
+          organizations (
+            id,
+            name
+          )
+        `)
+        .eq('id', session.user.id)
+        .single();
+
+      if (!profile) return null;
+
+      return {
+        id: session.user.id,
+        name: profile.name,
+        email: session.user.email!,
+        role: profile.role,
+        companyId: profile.organization_id,
+        companyName: profile.organizations?.name,
+        isDemo: false,
+        is_active: profile.is_active,
+        created_at: session.user.created_at,
+        updated_at: profile.updated_at
+      };
+    } catch (error) {
+      console.error('Error getting current user:', error);
+      return null;
     }
-
-    // Si no es demo, verificar sesión de Supabase
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return null;
-
-    // Obtener perfil del usuario real
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select(`
-        *,
-        organizations (
-          id,
-          name
-        )
-      `)
-      .eq('id', session.user.id)
-      .single();
-
-    if (!profile) return null;
-
-    return {
-      id: session.user.id,
-      name: profile.name,
-      email: session.user.email!,
-      role: profile.role,
-      companyId: profile.organization_id,
-      companyName: profile.organizations?.name,
-      isDemo: false,
-      is_active: profile.is_active,
-      created_at: session.user.created_at,
-      updated_at: profile.updated_at
-    };
   }
 };

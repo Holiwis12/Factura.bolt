@@ -30,34 +30,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
+  const login = async (email: string, password: string) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
-    const response = await authService.login(credentials);
-    
-    if (response.error) {
+    try {
+      const credentials: LoginCredentials = { email, password };
+      const response = await authService.login(credentials);
+      
+      if (response.error) {
+        setState(prev => ({
+          ...prev,
+          error: response.error,
+          loading: false
+        }));
+        throw new Error(response.error);
+      }
+
       setState(prev => ({
         ...prev,
-        error: response.error,
+        user: response.data!,
         loading: false
       }));
-      throw new Error(response.error);
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'Error al iniciar sesión',
+        loading: false
+      }));
+      throw error;
     }
-
-    setState(prev => ({
-      ...prev,
-      user: response.data!,
-      loading: false
-    }));
   };
 
-  const loginAsDemo = () => {
-    const response = authService.loginDemo();
-    setState(prev => ({
-      ...prev,
-      user: response.data!,
-      loading: false
-    }));
+  const loginAsDemo = async () => {
+    setState(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      const response = await authService.loginAsDemo();
+      
+      if (response.error) {
+        setState(prev => ({
+          ...prev,
+          error: response.error,
+          loading: false
+        }));
+        throw new Error(response.error);
+      }
+
+      setState(prev => ({
+        ...prev,
+        user: response.data!,
+        loading: false
+      }));
+    } catch (error) {
+      setState(prev => ({
+        ...prev,
+        error: 'Error al acceder al modo demo',
+        loading: false
+      }));
+      throw error;
+    }
   };
 
   const logout = async () => {
