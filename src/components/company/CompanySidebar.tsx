@@ -5,9 +5,6 @@ import {
   FileText, 
   Package, 
   Users, 
-  DollarSign,
-  BarChart3,
-  Settings,
   ChevronLeft,
   ChevronRight,
   ShoppingCart,
@@ -28,8 +25,7 @@ const companyMenuItems = [
   { icon: CreditCard, label: 'Pagos', path: '/company/payments' },
   { icon: Calculator, label: 'Contabilidad', path: '/company/accounting' },
   { icon: FileSpreadsheet, label: 'Reportes', path: '/company/reports' },
-  { icon: TrendingUp, label: 'Análisis', path: '/company/analytics' },
-  { icon: Settings, label: 'Configuración', path: '/company/settings' }
+  { icon: TrendingUp, label: 'Análisis', path: '/company/analytics' }
 ]
 
 export function CompanySidebar() {
