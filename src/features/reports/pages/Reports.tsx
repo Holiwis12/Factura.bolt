@@ -1,226 +1,188 @@
+import { BarChart3, TrendingUp, FileText, Download, Calendar, Filter } from 'lucide-react'
 import { useState } from 'react'
-import { Card } from '../../../components/ui/card'
-import { BarChart, LineChart, PieChart } from '../../../components/charts'
-import { Download, Calendar, Filter, TrendingUp, DollarSign, Users, Package } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line, PieChart, Pie, Cell } from 'recharts'
 
 const salesData = [
-  { name: 'Ene', sales: 45000, expenses: 32000, profit: 13000 },
-  { name: 'Feb', sales: 38000, expenses: 28000, profit: 10000 },
-  { name: 'Mar', sales: 52000, expenses: 35000, profit: 17000 },
-  { name: 'Abr', sales: 48000, expenses: 30000, profit: 18000 },
-  { name: 'May', sales: 55000, expenses: 38000, profit: 17000 },
-  { name: 'Jun', sales: 62000, expenses: 42000, profit: 20000 }
+  { month: 'Ene', sales: 12000, expenses: 8000 },
+  { month: 'Feb', sales: 15000, expenses: 9000 },
+  { month: 'Mar', sales: 18000, expenses: 11000 },
+  { month: 'Abr', sales: 22000, expenses: 13000 },
+  { month: 'May', sales: 25000, expenses: 15000 },
+  { month: 'Jun', sales: 28000, expenses: 16000 }
 ]
 
 const categoryData = [
-  { name: 'Electrónicos', value: 45, revenue: 180000 },
-  { name: 'Oficina', value: 25, revenue: 100000 },
-  { name: 'Accesorios', value: 20, revenue: 80000 },
-  { name: 'Audio', value: 10, revenue: 40000 }
-]
-
-const topProducts = [
-  { name: 'Laptop HP', sales: 25, revenue: 1125000 },
-  { name: 'Monitor 24"', sales: 18, revenue: 324000 },
-  { name: 'Impresora Multifuncional', sales: 15, revenue: 180000 },
-  { name: 'Teclado Mecánico', sales: 12, revenue: 42000 },
-  { name: 'Mouse Inalámbrico', sales: 35, revenue: 42000 }
-]
-
-const customerData = [
-  { name: 'Nuevos', value: 35 },
-  { name: 'Recurrentes', value: 45 },
-  { name: 'Inactivos', value: 20 }
+  { name: 'Electrónicos', value: 45, color: '#3B82F6' },
+  { name: 'Accesorios', value: 30, color: '#10B981' },
+  { name: 'Oficina', value: 15, color: '#F59E0B' },
+  { name: 'Otros', value: 10, color: '#EF4444' }
 ]
 
 export function Reports() {
-  const [dateRange, setDateRange] = useState('last-6-months')
-  const [reportType, setReportType] = useState('sales')
-
-  const handleExportReport = (format: 'pdf' | 'excel') => {
-    alert(`Exportando reporte en formato ${format.toUpperCase()}...`)
-  }
+  const [selectedPeriod, setSelectedPeriod] = useState('month')
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-violet-600 to-purple-500 rounded-2xl p-6 text-white">
-        <h1 className="text-3xl font-bold">Reportes</h1>
-        <p className="opacity-90">Análisis detallado de tu negocio</p>
-      </div>
-
-      {/* Controls */}
-      <div className="flex justify-between items-center">
-        <div className="flex gap-4">
-          <select
-            value={reportType}
-            onChange={(e) => setReportType(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white"
-          >
-            <option value="sales">Ventas</option>
-            <option value="inventory">Inventario</option>
-            <option value="customers">Clientes</option>
-            <option value="financial">Financiero</option>
-          </select>
-          
-          <select
-            value={dateRange}
-            onChange={(e) => setDateRange(e.target.value)}
-            className="px-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white"
-          >
-            <option value="last-7-days">Últimos 7 días</option>
-            <option value="last-30-days">Últimos 30 días</option>
-            <option value="last-3-months">Últimos 3 meses</option>
-            <option value="last-6-months">Últimos 6 meses</option>
-            <option value="last-year">Último año</option>
-          </select>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Reportes y Análisis</h1>
+          <p className="text-slate-400">Analiza el rendimiento de tu empresa</p>
         </div>
-        
-        <div className="flex gap-2">
-          <button 
-            onClick={() => handleExportReport('pdf')}
-            className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+        <div className="flex items-center gap-3">
+          <select
+            value={selectedPeriod}
+            onChange={(e) => setSelectedPeriod(e.target.value)}
+            className="px-3 py-2 bg-slate-800 border border-slate-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <Download size={20} />
-            PDF
-          </button>
-          <button 
-            onClick={() => handleExportReport('excel')}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            <Download size={20} />
-            Excel
+            <option value="week">Esta Semana</option>
+            <option value="month">Este Mes</option>
+            <option value="quarter">Este Trimestre</option>
+            <option value="year">Este Año</option>
+          </select>
+          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+            <Download size={18} />
+            Exportar
           </button>
         </div>
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-500/10 rounded-lg">
-              <DollarSign className="text-blue-400" size={24} />
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <TrendingUp size={24} className="text-green-400" />
             </div>
             <div>
-              <h3 className="text-sm font-medium text-slate-400">Ingresos Totales</h3>
-              <p className="text-2xl font-bold text-white">RD$ 300,000</p>
-              <p className="text-sm text-green-400">+15.3% vs período anterior</p>
+              <p className="text-slate-400 text-sm">Ventas Totales</p>
+              <p className="text-2xl font-bold text-white">S/ 120,000</p>
+              <p className="text-green-400 text-sm">+12% vs mes anterior</p>
             </div>
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-500/10 rounded-lg">
-              <TrendingUp className="text-green-400" size={24} />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-slate-400">Ganancia Neta</h3>
-              <p className="text-2xl font-bold text-white">RD$ 95,000</p>
-              <p className="text-sm text-green-400">+8.7% vs período anterior</p>
-            </div>
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-purple-500/10 rounded-lg">
-              <Users className="text-purple-400" size={24} />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-slate-400">Clientes Activos</h3>
-              <p className="text-2xl font-bold text-white">243</p>
-              <p className="text-sm text-green-400">+12.1% vs período anterior</p>
-            </div>
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-orange-500/10 rounded-lg">
-              <Package className="text-orange-400" size={24} />
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-slate-400">Productos Vendidos</h3>
-              <p className="text-2xl font-bold text-white">1,247</p>
-              <p className="text-sm text-green-400">+5.4% vs período anterior</p>
-            </div>
-          </div>
-        </Card>
-      </div>
-
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-lg font-medium mb-4 text-white">Tendencia de Ventas y Gastos</h3>
-          <LineChart data={salesData} />
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-lg font-medium mb-4 text-white">Ventas por Categoría</h3>
-          <PieChart data={categoryData} />
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-lg font-medium mb-4 text-white">Productos Más Vendidos</h3>
-          <div className="space-y-4">
-            {topProducts.map((product, index) => (
-              <div key={product.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
-                    {index + 1}
-                  </div>
-                  <div>
-                    <p className="text-white font-medium">{product.name}</p>
-                    <p className="text-slate-400 text-sm">{product.sales} unidades</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <p className="text-white font-medium">RD$ {product.revenue.toLocaleString()}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-lg font-medium mb-4 text-white">Distribución de Clientes</h3>
-          <PieChart data={customerData} />
-        </Card>
-      </div>
-
-      {/* Detailed Table */}
-      <Card className="bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-        <div className="p-6">
-          <h3 className="text-lg font-medium mb-4 text-white">Resumen Mensual</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left border-b border-slate-700">
-                  <th className="pb-3 text-slate-400">Mes</th>
-                  <th className="pb-3 text-slate-400">Ventas</th>
-                  <th className="pb-3 text-slate-400">Gastos</th>
-                  <th className="pb-3 text-slate-400">Ganancia</th>
-                  <th className="pb-3 text-slate-400">Margen</th>
-                </tr>
-              </thead>
-              <tbody>
-                {salesData.map((month) => (
-                  <tr key={month.name} className="border-b border-slate-700">
-                    <td className="py-4 text-white font-medium">{month.name}</td>
-                    <td className="py-4 text-white">RD$ {month.sales.toLocaleString()}</td>
-                    <td className="py-4 text-white">RD$ {month.expenses.toLocaleString()}</td>
-                    <td className="py-4 text-green-400 font-medium">RD$ {month.profit.toLocaleString()}</td>
-                    <td className="py-4 text-white">{((month.profit / month.sales) * 100).toFixed(1)}%</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
-      </Card>
+
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+              <BarChart3 size={24} className="text-blue-400" />
+            </div>
+            <div>
+              <p className="text-slate-400 text-sm">Ganancia Neta</p>
+              <p className="text-2xl font-bold text-white">S/ 48,000</p>
+              <p className="text-blue-400 text-sm">+8% vs mes anterior</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <FileText size={24} className="text-purple-400" />
+            </div>
+            <div>
+              <p className="text-slate-400 text-sm">Facturas Emitidas</p>
+              <p className="text-2xl font-bold text-white">156</p>
+              <p className="text-purple-400 text-sm">+15% vs mes anterior</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+              <Calendar size={24} className="text-yellow-400" />
+            </div>
+            <div>
+              <p className="text-slate-400 text-sm">Promedio Diario</p>
+              <p className="text-2xl font-bold text-white">S/ 4,000</p>
+              <p className="text-yellow-400 text-sm">+5% vs mes anterior</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Sales Chart */}
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 className="text-lg font-semibold text-white mb-4">Ventas vs Gastos</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={salesData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+              <XAxis dataKey="month" stroke="#9CA3AF" />
+              <YAxis stroke="#9CA3AF" />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F9FAFB'
+                }} 
+              />
+              <Bar dataKey="sales" fill="#3B82F6" name="Ventas" />
+              <Bar dataKey="expenses" fill="#EF4444" name="Gastos" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Category Distribution */}
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <h3 className="text-lg font-semibold text-white mb-4">Ventas por Categoría</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={categoryData}
+                cx="50%"
+                cy="50%"
+                outerRadius={100}
+                dataKey="value"
+                label={({ name, value }) => `${name}: ${value}%`}
+              >
+                {categoryData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: '#1F2937', 
+                  border: '1px solid #374151',
+                  borderRadius: '8px',
+                  color: '#F9FAFB'
+                }} 
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </div>
+
+      {/* Trend Chart */}
+      <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+        <h3 className="text-lg font-semibold text-white mb-4">Tendencia de Ventas</h3>
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={salesData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis dataKey="month" stroke="#9CA3AF" />
+            <YAxis stroke="#9CA3AF" />
+            <Tooltip 
+              contentStyle={{ 
+                backgroundColor: '#1F2937', 
+                border: '1px solid #374151',
+                borderRadius: '8px',
+                color: '#F9FAFB'
+              }} 
+            />
+            <Line 
+              type="monotone" 
+              dataKey="sales" 
+              stroke="#10B981" 
+              strokeWidth={3}
+              dot={{ fill: '#10B981', strokeWidth: 2, r: 6 }}
+              name="Ventas"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   )
 }

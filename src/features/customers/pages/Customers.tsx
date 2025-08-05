@@ -1,17 +1,14 @@
+import { Users, Plus, Search, Edit, Trash2, Phone, Mail } from 'lucide-react'
 import { useState } from 'react'
-import { Card } from '../../../components/ui/card'
-import { Plus, Search, Edit, Trash2, Phone, Mail, MapPin } from 'lucide-react'
 
-type Customer = {
+interface Customer {
   id: string
   name: string
   email: string
   phone: string
+  document: string
   address: string
-  city: string
   totalPurchases: number
-  lastPurchase: string
-  status: 'active' | 'inactive'
 }
 
 const mockCustomers: Customer[] = [
@@ -19,198 +16,215 @@ const mockCustomers: Customer[] = [
     id: '1',
     name: 'Juan Pérez',
     email: 'juan.perez@email.com',
-    phone: '809-555-0123',
-    address: 'Av. Winston Churchill 1234',
-    city: 'Santo Domingo',
-    totalPurchases: 125000,
-    lastPurchase: '2024-03-15',
-    status: 'active'
+    phone: '+51 987 654 321',
+    document: '12345678',
+    address: 'Av. Lima 123, Lima',
+    totalPurchases: 2500
   },
   {
     id: '2',
     name: 'María García',
     email: 'maria.garcia@email.com',
-    phone: '809-555-0456',
-    address: 'Calle El Conde 567',
-    city: 'Santo Domingo',
-    totalPurchases: 89500,
-    lastPurchase: '2024-03-12',
-    status: 'active'
+    phone: '+51 987 654 322',
+    document: '87654321',
+    address: 'Jr. Cusco 456, Lima',
+    totalPurchases: 1800
   },
   {
     id: '3',
-    name: 'Carlos Rodríguez',
-    email: 'carlos.rodriguez@email.com',
-    phone: '809-555-0789',
-    address: 'Av. 27 de Febrero 890',
-    city: 'Santiago',
-    totalPurchases: 45000,
-    lastPurchase: '2024-02-28',
-    status: 'inactive'
-  },
-  {
-    id: '4',
-    name: 'Ana Martínez',
-    email: 'ana.martinez@email.com',
-    phone: '809-555-0321',
-    address: 'Calle Duarte 123',
-    city: 'La Vega',
-    totalPurchases: 67800,
-    lastPurchase: '2024-03-10',
-    status: 'active'
+    name: 'Carlos López',
+    email: 'carlos.lopez@email.com',
+    phone: '+51 987 654 323',
+    document: '11223344',
+    address: 'Av. Arequipa 789, Lima',
+    totalPurchases: 3200
   }
 ]
 
 export function Customers() {
-  const [customers, setCustomers] = useState<Customer[]>(mockCustomers)
+  const [customers] = useState<Customer[]>(mockCustomers)
   const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [editingCustomer, setEditingCustomer] = useState<Customer | null>(null)
 
   const filteredCustomers = customers.filter(customer =>
     customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.phone.includes(searchTerm)
+    customer.document.includes(searchTerm)
   )
 
-  const handleDeleteCustomer = (id: string) => {
-    if (confirm('¿Estás seguro de que deseas eliminar este cliente?')) {
-      setCustomers(customers.filter(c => c.id !== id))
-    }
-  }
-
-  const getStatusColor = (status: Customer['status']) => {
-    return status === 'active' 
-      ? 'bg-green-500/10 text-green-400' 
-      : 'bg-red-500/10 text-red-400'
-  }
-
-  const getStatusText = (status: Customer['status']) => {
-    return status === 'active' ? 'Activo' : 'Inactivo'
-  }
-
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-600 to-pink-500 rounded-2xl p-6 text-white">
-        <h1 className="text-3xl font-bold">Clientes</h1>
-        <p className="opacity-90">Gestión de clientes y contactos</p>
-      </div>
-
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-sm font-medium text-slate-400">Total Clientes</h3>
-          <p className="mt-2 text-2xl font-bold text-white">{customers.length}</p>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-sm font-medium text-slate-400">Clientes Activos</h3>
-          <p className="mt-2 text-2xl font-bold text-white">
-            {customers.filter(c => c.status === 'active').length}
-          </p>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-sm font-medium text-slate-400">Ventas Totales</h3>
-          <p className="mt-2 text-2xl font-bold text-white">
-            RD$ {customers.reduce((sum, c) => sum + c.totalPurchases, 0).toLocaleString()}
-          </p>
-        </Card>
-        
-        <Card className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700">
-          <h3 className="text-sm font-medium text-slate-400">Promedio por Cliente</h3>
-          <p className="mt-2 text-2xl font-bold text-white">
-            RD$ {Math.round(customers.reduce((sum, c) => sum + c.totalPurchases, 0) / customers.length).toLocaleString()}
-          </p>
-        </Card>
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-between items-center">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={20} />
-          <input
-            type="text"
-            placeholder="Buscar clientes..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 pr-4 py-2 rounded-lg bg-slate-800 border border-slate-700 text-white w-80"
-          />
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Clientes</h1>
+          <p className="text-slate-400">Gestiona tu base de clientes</p>
         </div>
-        <button 
+        <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
-          <Plus size={20} />
+          <Plus size={18} />
           Nuevo Cliente
         </button>
       </div>
 
-      {/* Customers Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredCustomers.map((customer) => (
-          <Card key={customer.id} className="p-6 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 hover:border-slate-600 transition-colors">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold">
-                  {customer.name.charAt(0)}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white">{customer.name}</h3>
-                  <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(customer.status)}`}>
-                    {getStatusText(customer.status)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setEditingCustomer(customer)}
-                  className="p-2 text-blue-400 hover:text-blue-300 hover:bg-slate-700 rounded-lg"
-                >
-                  <Edit size={16} />
-                </button>
-                <button 
-                  onClick={() => handleDeleteCustomer(customer.id)}
-                  className="p-2 text-red-400 hover:text-red-300 hover:bg-slate-700 rounded-lg"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
+              <Users size={24} className="text-blue-400" />
             </div>
+            <div>
+              <p className="text-slate-400 text-sm">Total Clientes</p>
+              <p className="text-2xl font-bold text-white">{customers.length}</p>
+            </div>
+          </div>
+        </div>
 
-            <div className="space-y-2 text-sm">
-              <div className="flex items-center gap-2 text-slate-300">
-                <Mail size={14} />
-                {customer.email}
-              </div>
-              <div className="flex items-center gap-2 text-slate-300">
-                <Phone size={14} />
-                {customer.phone}
-              </div>
-              <div className="flex items-center gap-2 text-slate-300">
-                <MapPin size={14} />
-                {customer.city}
-              </div>
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <Users size={24} className="text-green-400" />
             </div>
+            <div>
+              <p className="text-slate-400 text-sm">Clientes Activos</p>
+              <p className="text-2xl font-bold text-white">{customers.length}</p>
+            </div>
+          </div>
+        </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-700">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Total Compras:</span>
-                <span className="text-white font-medium">RD$ {customer.totalPurchases.toLocaleString()}</span>
-              </div>
-              <div className="flex justify-between text-sm mt-1">
-                <span className="text-slate-400">Última Compra:</span>
-                <span className="text-white">{customer.lastPurchase}</span>
-              </div>
+        <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <Users size={24} className="text-purple-400" />
             </div>
-          </Card>
-        ))}
+            <div>
+              <p className="text-slate-400 text-sm">Ventas Totales</p>
+              <p className="text-2xl font-bold text-white">
+                S/ {customers.reduce((sum, c) => sum + c.totalPurchases, 0).toLocaleString()}
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {filteredCustomers.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-slate-400">No se encontraron clientes</p>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" size={18} />
+        <input
+          type="text"
+          placeholder="Buscar clientes por nombre, email o documento..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-4 py-3 bg-slate-800 border border-slate-700 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* Customers Table */}
+      <div className="bg-slate-800 rounded-xl border border-slate-700 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-slate-700">
+              <tr>
+                <th className="text-left p-4 text-slate-300 font-medium">Cliente</th>
+                <th className="text-left p-4 text-slate-300 font-medium">Contacto</th>
+                <th className="text-left p-4 text-slate-300 font-medium">Documento</th>
+                <th className="text-left p-4 text-slate-300 font-medium">Total Compras</th>
+                <th className="text-left p-4 text-slate-300 font-medium">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCustomers.map((customer) => (
+                <tr key={customer.id} className="border-t border-slate-700 hover:bg-slate-700/50">
+                  <td className="p-4">
+                    <div>
+                      <p className="font-medium text-white">{customer.name}</p>
+                      <p className="text-sm text-slate-400">{customer.address}</p>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-sm text-slate-300">
+                        <Mail size={14} />
+                        {customer.email}
+                      </div>
+                      <div className="flex items-center gap-2 text-sm text-slate-300">
+                        <Phone size={14} />
+                        {customer.phone}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <span className="text-white">{customer.document}</span>
+                  </td>
+                  <td className="p-4">
+                    <span className="text-green-400 font-medium">
+                      S/ {customer.totalPurchases.toLocaleString()}
+                    </span>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center gap-2">
+                      <button className="p-2 text-blue-400 hover:bg-blue-500/20 rounded-lg transition-colors">
+                        <Edit size={16} />
+                      </button>
+                      <button className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Add Customer Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-slate-800 rounded-xl p-6 w-full max-w-md border border-slate-700">
+            <h3 className="text-lg font-semibold text-white mb-4">Nuevo Cliente</h3>
+            <div className="space-y-4">
+              <input
+                type="text"
+                placeholder="Nombre completo"
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+              />
+              <input
+                type="text"
+                placeholder="Teléfono"
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+              />
+              <input
+                type="text"
+                placeholder="Documento"
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+              />
+              <textarea
+                placeholder="Dirección"
+                className="w-full px-3 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400"
+                rows={3}
+              />
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowAddModal(false)}
+                className="flex-1 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+              >
+                Cancelar
+              </button>
+              <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
+                Guardar
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
