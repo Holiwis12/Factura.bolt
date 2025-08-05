@@ -4,18 +4,31 @@ import {
   LayoutDashboard, 
   FileText, 
   Package, 
-  Calculator,
+  Users, 
+  DollarSign,
+  BarChart3,
   Settings,
   ChevronLeft,
   ChevronRight,
-  Building2
+  ShoppingCart,
+  Calculator,
+  FileSpreadsheet,
+  Building2,
+  CreditCard,
+  TrendingUp
 } from 'lucide-react'
 
-const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/company/dashboard' },
-  { icon: FileText, label: 'Facturación', path: '/company/invoices' },
+const companyMenuItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/company' },
+  { icon: Building2, label: 'Mi Empresa', path: '/company/profile' },
+  { icon: ShoppingCart, label: 'Punto de Venta', path: '/company/pos' },
+  { icon: FileText, label: 'Facturas', path: '/company/invoices' },
   { icon: Package, label: 'Inventario', path: '/company/inventory' },
+  { icon: Users, label: 'Clientes', path: '/company/customers' },
+  { icon: CreditCard, label: 'Pagos', path: '/company/payments' },
   { icon: Calculator, label: 'Contabilidad', path: '/company/accounting' },
+  { icon: FileSpreadsheet, label: 'Reportes', path: '/company/reports' },
+  { icon: TrendingUp, label: 'Análisis', path: '/company/analytics' },
   { icon: Settings, label: 'Configuración', path: '/company/settings' }
 ]
 
@@ -29,8 +42,8 @@ export function CompanySidebar() {
       <div className="p-4 border-b border-slate-700">
         <div className="flex items-center justify-between">
           <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
-              <Building2 className="text-white" size={24} />
+            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center font-bold text-white">
+              E
             </div>
             {!collapsed && (
               <div>
@@ -50,7 +63,7 @@ export function CompanySidebar() {
 
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => {
+        {companyMenuItems.map((item) => {
           const Icon = item.icon
           const isActive = location.pathname === item.path
           
@@ -79,12 +92,12 @@ export function CompanySidebar() {
       {/* Company Info */}
       <div className="p-3 border-t border-slate-700">
         <div className={`flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-700/50 ${collapsed ? 'justify-center' : ''}`}>
-          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium">
-            ME
+          <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-medium">
+            C
           </div>
           {!collapsed && (
             <div className="flex-1">
-              <p className="text-sm font-medium text-white">Mi Empresa SRL</p>
+              <p className="text-sm font-medium text-white">Mi Empresa S.A.</p>
               <p className="text-xs text-slate-400">RNC: 123456789</p>
             </div>
           )}

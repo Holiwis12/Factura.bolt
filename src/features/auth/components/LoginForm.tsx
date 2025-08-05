@@ -56,6 +56,7 @@ export function LoginForm() {
             name="email"
             required
             className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+            placeholder="demo@empresa.com"
           />
         </div>
 
@@ -69,6 +70,7 @@ export function LoginForm() {
             name="password"
             required
             className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+            placeholder="demo123"
           />
         </div>
 
@@ -81,12 +83,20 @@ export function LoginForm() {
         </button>
       </form>
 
-      <div className="mt-6">
+      <div className="mt-6 pt-6 border-t border-slate-700">
+        <div className="text-center mb-4">
+          <p className="text-slate-400 text-sm mb-2">Credenciales de prueba:</p>
+          <div className="bg-slate-700/30 rounded-lg p-3 text-sm">
+            <p className="text-slate-300"><strong>Email:</strong> demo@empresa.com</p>
+            <p className="text-slate-300"><strong>Password:</strong> demo123</p>
+          </div>
+        </div>
+        
         <button
           onClick={handleDemoLogin}
           className="w-full py-2 px-4 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors"
         >
-          Entrar como Demo
+          Acceso Rápido Demo
         </button>
       </div>
     </div>

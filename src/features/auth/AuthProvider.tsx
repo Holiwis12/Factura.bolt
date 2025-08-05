@@ -1,125 +1,87 @@
-import { createContext, useContext, ReactNode, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import { supabase } from '../../lib/supabase'
-import { User } from '@supabase/supabase-js'
+import type { User, Session } from '@supabase/supabase-js'
 
-type AuthUser = {
-  id: string
-  name: string
-  email: string
-  role: 'admin' | 'sales' | 'accountant' | 'inventory' | 'demo'
-  isDemo?: boolean
+interface AuthUser extends User {
+  role?: 'admin' | 'company' | 'user'
 }
 
-type AuthContextType = {
+interface AuthContextType {
   user: AuthUser | null
+  session: Session | null
   loading: boolean
   login: (email: string, password: string) => Promise<void>
-  loginAsDemo: () => void
   logout: () => Promise<void>
+  signup: (email: string, password: string) => Promise<void>
 }
 
-export const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-const DEMO_USER: AuthUser = {
-  id: 'demo-user',
-  name: 'Usuario Demo',
-  email: 'demo@facturapro.com',
-  role: 'demo',
-  isDemo: true
+interface AuthProviderProps {
+  children: ReactNode
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<AuthUser | null>(null)
+  const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for demo user in localStorage
-    const savedUser = localStorage.getItem('demoUser')
-    if (savedUser) {
-      setUser(JSON.parse(savedUser))
-      setLoading(false)
-      return
-    }
-
-    // Check active Supabase sessions
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setUserData(session.user)
-      }
+      setSession(session)
+      setUser(session?.user as AuthUser || null)
       setLoading(false)
     })
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUserData(session.user)
-      } else {
-        setUser(null)
-        localStorage.removeItem('demoUser')
-      }
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      setUser(session?.user as AuthUser || null)
       setLoading(false)
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
-  const setUserData = async (authUser: User) => {
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', authUser.id)
-      .single()
-
-    setUser({
-      id: authUser.id,
-      email: authUser.email!,
-      name: profile?.name || 'Usuario',
-      role: profile?.role || 'admin'
-    })
-  }
-
   const login = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
       email,
-      password
+      password,
     })
     if (error) throw error
   }
 
-  const loginAsDemo = () => {
-    setUser(DEMO_USER)
-    localStorage.setItem('demoUser', JSON.stringify(DEMO_USER))
-  }
-
   const logout = async () => {
-    if (user?.isDemo) {
-      setUser(null)
-      localStorage.removeItem('demoUser')
-      return
-    }
-    
     const { error } = await supabase.auth.signOut()
     if (error) throw error
-    setUser(null)
+  }
+
+  const signup = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    })
+    if (error) throw error
   }
 
   const value = {
     user,
+    session,
     loading,
     login,
-    loginAsDemo,
-    logout
+    logout,
+    signup,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {
   const context = useContext(AuthContext)
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useAuth must be used within an AuthProvider')
   }
   return context
