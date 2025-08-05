@@ -1,10 +1,17 @@
-import React from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
+import { MainLayout } from './layouts/MainLayout'
+import { NotificationsProvider } from './features/notifications/context/NotificationsContext'
+import { AuthProvider } from './features/auth/AuthProvider'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <p>Start prompting (or editing) to see magic happen :)</p>
-    </div>
+    <Router>
+      <AuthProvider>
+        <NotificationsProvider>
+          <MainLayout />
+        </NotificationsProvider>
+      </AuthProvider>
+    </Router>
   )
 }
 

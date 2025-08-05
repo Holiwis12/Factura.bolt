@@ -1,18 +1,17 @@
 import { Outlet } from 'react-router-dom'
-import { Sidebar } from '../components/Sidebar'
-import { Topbar } from '../components/Topbar'
-import { AppRoutes } from '../routes'
+import { CompanySidebar } from '../components/company/CompanySidebar'
+import { CompanyTopbar } from '../components/company/CompanyTopbar'
 
-export function MainLayout() {
+export function CompanyLayout() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      <Sidebar />
+      <CompanySidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar />
+        <CompanyTopbar />
         
         <main className="flex-1 overflow-y-auto p-6">
-          <AppRoutes />
+          <Outlet />
         </main>
       </div>
     </div>

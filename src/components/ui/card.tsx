@@ -1,13 +1,13 @@
 import { ReactNode } from 'react'
 
-interface CardProps {
+type CardProps = {
   children: ReactNode
   className?: string
 }
 
 export function Card({ children, className = '' }: CardProps) {
   return (
-    <div className={`rounded-xl shadow-lg ${className}`}>
+    <div className={`rounded-xl ${className}`}>
       {children}
     </div>
   )

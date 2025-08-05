@@ -1,26 +1,13 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { AuthProvider } from './features/auth/AuthProvider'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import { MainLayout } from './layouts/MainLayout'
-import { DashboardPage } from './features/dashboard/DashboardPage'
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App.tsx'
 import './index.css'
+import { NotificationsProvider } from './features/notifications/context/NotificationsContext'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      { path: '/', element: <DashboardPage /> },
-      // Other routes will be added here
-    ]
-  }
-])
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <AuthProvider>
-      <RouterProvider router={router} />
-    </AuthProvider>
-  </StrictMode>
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <NotificationsProvider>
+      <App />
+    </NotificationsProvider>
+  </React.StrictMode>,
 )

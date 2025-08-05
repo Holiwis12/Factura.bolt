@@ -1,65 +1,57 @@
-import { createBrowserRouter } from 'react-router-dom'
-import { AuthGuard } from '@/components/layout/AuthGuard'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
-import { MainLayout } from '@/layouts/MainLayout'
-import { Dashboard } from '@/pages/Dashboard'
-import { Login } from '@/pages/Login'
-import { Organizations } from '@/pages/Organizations'
-import { Clients } from '@/pages/Clients'
-import { Products } from '@/pages/Products'
-import { Invoices } from '@/pages/Invoices'
+import { Routes, Route, Navigate } from 'react-router-dom'
+import { AdminLayout } from '../layouts/AdminLayout'
+import { CompanyLayout } from '../layouts/CompanyLayout'
+import { useAuth } from '../features/auth/AuthProvider'
 
-export const router = createBrowserRouter([
-  {
-    path: '/login',
-    element: <Login />,
-    errorElement: <ErrorBoundary />
-  },
-  {
-    path: '/',
-    element: <MainLayout />,
-    errorElement: <ErrorBoundary />,
-    children: [
-      {
-        index: true,
-        element: (
-          <AuthGuard>
-            <Dashboard />
-          </AuthGuard>
-        )
-      },
-      {
-        path: 'organizations',
-        element: (
-          <AuthGuard requiredRole="global_admin">
-            <Organizations />
-          </AuthGuard>
-        )
-      },
-      {
-        path: 'clients',
-        element: (
-          <AuthGuard>
-            <Clients />
-          </AuthGuard>
-        )
-      },
-      {
-        path: 'products',
-        element: (
-          <AuthGuard>
-            <Products />
-          </AuthGuard>
-        )
-      },
-      {
-        path: 'invoices',
-        element: (
-          <AuthGuard>
-            <Invoices />
-          </AuthGuard>
-        )
-      }
-    ]
+// Admin Pages
+import { AdminDashboard } from '../features/admin/pages/Dashboard'
+import { CompanyManagement } from '../features/admin/pages/CompanyManagement'
+import { UserManagement } from '../features/admin/pages/UserManagement'
+
+// Company Pages
+import { CompanyDashboard } from '../features/dashboard/pages/Dashboard'
+import { Invoices } from '../features/invoicing/pages/Invoices'
+import { Inventory } from '../features/inventory/pages/Inventory'
+import { Accounting } from '../features/accounting/pages/Accounting'
+import { Settings } from '../features/settings/pages/Settings'
+
+export function AppRoutes() {
+  const { user } = useAuth()
+
+  if (!user) {
+    return <Navigate to="/login" replace />
   }
-])
+
+  return (
+    <Routes>
+      {/* Admin Routes */}
+      {user.role === 'admin' && (
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="companies" element={<CompanyManagement />} />
+          <Route path="users" element={<UserManagement />} />
+        </Route>
+      )}
+
+      {/* Company Routes */}
+      <Route path="/company" element={<CompanyLayout />}>
+        <Route index element={<CompanyDashboard />} />
+        <Route path="invoices" element={<Invoices />} />
+        <Route path="inventory" element={<Inventory />} />
+        <Route path="accounting" element={<Accounting />} />
+        <Route path="settings" element={<Settings />} />
+      </Route>
+
+      {/* Redirect based on role */}
+      <Route
+        path="/"
+        element={
+          <Navigate
+            to={user.role === 'admin' ? '/admin' : '/company'}
+            replace
+          />
+        }
+      />
+    </Routes>
+  )
+}

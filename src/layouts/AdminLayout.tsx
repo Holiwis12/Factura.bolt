@@ -1,18 +1,17 @@
 import { Outlet } from 'react-router-dom'
-import { Sidebar } from '../components/Sidebar'
-import { Topbar } from '../components/Topbar'
-import { AppRoutes } from '../routes'
+import { AdminSidebar } from '../components/admin/AdminSidebar'
+import { AdminTopbar } from '../components/admin/AdminTopbar'
 
-export function MainLayout() {
+export function AdminLayout() {
   return (
     <div className="flex h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      <Sidebar />
+      <AdminSidebar />
       
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Topbar />
+        <AdminTopbar />
         
         <main className="flex-1 overflow-y-auto p-6">
-          <AppRoutes />
+          <Outlet />
         </main>
       </div>
     </div>

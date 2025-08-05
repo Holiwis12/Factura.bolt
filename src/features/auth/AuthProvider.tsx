@@ -10,14 +10,6 @@ type AuthUser = {
   isDemo?: boolean
 }
 
-const DEMO_USER: AuthUser = {
-  id: 'demo-user',
-  name: 'Usuario Demo',
-  email: 'demo@facturapro.com',
-  role: 'demo',
-  isDemo: true
-}
-
 type AuthContextType = {
   user: AuthUser | null
   loading: boolean
@@ -26,7 +18,15 @@ type AuthContextType = {
   logout: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+export const AuthContext = createContext<AuthContextType | null>(null)
+
+const DEMO_USER: AuthUser = {
+  id: 'demo-user',
+  name: 'Usuario Demo',
+  email: 'demo@facturapro.com',
+  role: 'demo',
+  isDemo: true
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -102,8 +102,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }
 
+  const value = {
+    user,
+    loading,
+    login,
+    loginAsDemo,
+    logout
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginAsDemo, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   )
