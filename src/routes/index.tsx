@@ -4,7 +4,7 @@ import { CompanyLayout } from '../layouts/CompanyLayout'
 import { useAuth } from '../features/auth/AuthProvider'
 import { Suspense } from 'react'
 
-// Admin Pages
+// Admin Pages (Software Owner)
 import { AdminDashboard } from '../features/admin/pages/Dashboard'
 import { CompanyManagement } from '../features/admin/pages/CompanyManagement'
 import { UserManagement } from '../features/admin/pages/UserManagement'
@@ -40,8 +40,8 @@ export function AppRoutes() {
   return (
     <Suspense fallback={<LoadingSpinner />}>
       <Routes>
-        {/* Admin Routes */}
-        {user.role === 'admin' && (
+        {/* Software Owner Routes (adminpro) */}
+        {user.role === 'software_owner' && (
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="companies" element={<CompanyManagement />} />
@@ -49,27 +49,29 @@ export function AppRoutes() {
           </Route>
         )}
 
-        {/* Company Routes */}
-        <Route path="/company" element={<CompanyLayout />}>
-          <Route index element={<CompanyDashboard />} />
-          <Route path="profile" element={<CompanyProfile />} />
-          <Route path="pos" element={<PointOfSale />} />
-          <Route path="invoices" element={<Invoices />} />
-          <Route path="inventory" element={<Inventory />} />
-          <Route path="customers" element={<Customers />} />
-          <Route path="payments" element={<Payments />} />
-          <Route path="accounting" element={<Accounting />} />
-          <Route path="reports" element={<Reports />} />
-          <Route path="analytics" element={<Reports />} />
-          <Route path="settings" element={<Settings />} />
-        </Route>
+        {/* Company Routes (Owner, Employees, Demo) */}
+        {(user.role === 'company_owner' || user.role === 'employee' || user.role === 'demo') && (
+          <Route path="/company" element={<CompanyLayout />}>
+            <Route index element={<CompanyDashboard />} />
+            <Route path="profile" element={<CompanyProfile />} />
+            <Route path="pos" element={<PointOfSale />} />
+            <Route path="invoices" element={<Invoices />} />
+            <Route path="inventory" element={<Inventory />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="accounting" element={<Accounting />} />
+            <Route path="reports" element={<Reports />} />
+            <Route path="analytics" element={<Reports />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
+        )}
 
         {/* Redirect based on role */}
         <Route
           path="/"
           element={
             <Navigate
-              to={user.role === 'admin' ? '/admin' : '/company'}
+              to={user.role === 'software_owner' ? '/admin' : '/company'}
               replace
             />
           }
@@ -80,7 +82,7 @@ export function AppRoutes() {
           path="*"
           element={
             <Navigate
-              to={user.role === 'admin' ? '/admin' : '/company'}
+              to={user.role === 'software_owner' ? '/admin' : '/company'}
               replace
             />
           }

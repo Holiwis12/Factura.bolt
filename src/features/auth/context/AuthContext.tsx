@@ -19,9 +19,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const checkAuth = async () => {
     try {
+      console.log('🔍 Verificando autenticación...');
       const user = await authService.getCurrentUser();
+      console.log('👤 Usuario actual:', user?.role || 'ninguno');
       setState(prev => ({ ...prev, user, loading: false }));
     } catch (error) {
+      console.log('❌ Error verificando auth:', error);
       setState(prev => ({
         ...prev,
         error: 'Error al verificar autenticación',
@@ -30,11 +33,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (credentials: LoginCredentials) => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
-      const credentials: LoginCredentials = { email, password };
+      console.log('🚀 Iniciando login...');
       const response = await authService.login(credentials);
       
       if (response.error) {
@@ -46,12 +49,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(response.error);
       }
 
+      console.log('✅ Login exitoso:', response.data?.role);
       setState(prev => ({
         ...prev,
         user: response.data!,
         loading: false
       }));
     } catch (error) {
+      console.log('❌ Error en login:', error);
       setState(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'Error al iniciar sesión',
@@ -65,6 +70,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, loading: true, error: null }));
     
     try {
+      console.log('🚀 Iniciando demo...');
       const response = await authService.loginAsDemo();
       
       if (response.error) {
@@ -76,6 +82,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         throw new Error(response.error);
       }
 
+      console.log('✅ Demo exitoso');
       setState(prev => ({
         ...prev,
         user: response.data!,
@@ -95,8 +102,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, loading: true }));
     
     try {
+      console.log('🚪 Cerrando sesión...');
       await authService.logout();
       setState({ ...initialState, loading: false });
+      console.log('✅ Sesión cerrada');
     } catch (error) {
       setState(prev => ({
         ...prev,

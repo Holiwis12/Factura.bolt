@@ -29,16 +29,28 @@ export function NotificationPanel() {
   
   const panelRef = useRef<HTMLDivElement>(null)
 
-  // Close panel when clicking outside
+  // Close panel when clicking outside - PERO NO en la campanita
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+      const target = event.target as Element
+      
+      // No cerrar si se hace clic en la campanita o sus elementos hijos
+      if (target.closest('[aria-label="Notificaciones"]')) {
+        return
+      }
+      
+      if (panelRef.current && !panelRef.current.contains(target)) {
+        console.log('Clicking outside panel, closing...')
         closePanel()
       }
     }
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      // Pequeño delay para evitar que se cierre inmediatamente después de abrir
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside)
+      }, 100)
+      
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isOpen, closePanel])
@@ -67,10 +79,22 @@ export function NotificationPanel() {
     removeNotification(id)
   }
 
+  const handleClosePanel = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    console.log('Close button clicked')
+    closePanel()
+  }
+
+  const handleClearAll = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    clearAll()
+  }
+
   return (
     <div 
       ref={panelRef}
       className="absolute right-0 top-12 w-80 bg-slate-800 border border-slate-700 rounded-lg shadow-xl z-50 max-h-96 overflow-hidden"
+      onClick={(e) => e.stopPropagation()}
     >
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-700">
@@ -86,7 +110,7 @@ export function NotificationPanel() {
         <div className="flex items-center gap-2">
           {notifications.length > 0 && (
             <button
-              onClick={clearAll}
+              onClick={handleClearAll}
               className="text-slate-400 hover:text-white p-1 rounded transition-colors"
               title="Limpiar todas"
             >
@@ -94,8 +118,9 @@ export function NotificationPanel() {
             </button>
           )}
           <button
-            onClick={closePanel}
+            onClick={handleClosePanel}
             className="text-slate-400 hover:text-white p-1 rounded transition-colors"
+            title="Cerrar panel"
           >
             <X size={16} />
           </button>
@@ -117,7 +142,7 @@ export function NotificationPanel() {
                 <div
                   key={notification.id}
                   onClick={() => handleNotificationClick(notification.id)}
-                  className={`p-4 hover:bg-slate-700/50 cursor-pointer transition-colors ${
+                  className={`p-4 hover:bg-slate-700/50 cursor-pointer transition-colors group ${
                     !notification.read ? 'bg-slate-700/30' : ''
                   }`}
                 >
@@ -138,6 +163,7 @@ export function NotificationPanel() {
                           <button
                             onClick={(e) => handleRemoveNotification(e, notification.id)}
                             className="text-slate-500 hover:text-slate-300 p-1 rounded transition-colors opacity-0 group-hover:opacity-100"
+                            title="Eliminar notificación"
                           >
                             <X size={14} />
                           </button>

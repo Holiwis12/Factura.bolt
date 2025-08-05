@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { CompanySidebar } from '../components/company/CompanySidebar'
-import { CompanyTopbar } from '../components/company/CompanyTopbar'
+import { CompanySidebar } from '../../components/company/CompanySidebar'
+import { CompanyTopbar } from '../../components/company/CompanyTopbar'
 
 export function CompanyLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)

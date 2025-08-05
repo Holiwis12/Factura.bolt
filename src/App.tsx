@@ -34,11 +34,11 @@ export default function App() {
   return (
     <ErrorBoundary>
       <BrowserRouter>
-        <AuthProvider>
-          <NotificationsProvider>
+        <NotificationsProvider>
+          <AuthProvider>
             <AppContent />
-          </NotificationsProvider>
-        </AuthProvider>
+          </AuthProvider>
+        </NotificationsProvider>
       </BrowserRouter>
     </ErrorBoundary>
   )

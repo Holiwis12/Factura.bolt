@@ -48,15 +48,15 @@ export function LoginForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
-            Correo Electrónico
+            Usuario / Email
           </label>
           <input
-            type="email"
+            type="text"
             id="email"
             name="email"
             required
             className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            placeholder="demo@empresa.com"
+            placeholder="adminpro"
           />
         </div>
 
@@ -70,7 +70,7 @@ export function LoginForm() {
             name="password"
             required
             className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            placeholder="demo123"
+            placeholder="@Teamo1110a"
           />
         </div>
 
@@ -85,10 +85,23 @@ export function LoginForm() {
 
       <div className="mt-6 pt-6 border-t border-slate-700">
         <div className="text-center mb-4">
-          <p className="text-slate-400 text-sm mb-2">Credenciales de prueba:</p>
-          <div className="bg-slate-700/30 rounded-lg p-3 text-sm">
-            <p className="text-slate-300"><strong>Email:</strong> demo@empresa.com</p>
-            <p className="text-slate-300"><strong>Password:</strong> demo123</p>
+          <p className="text-slate-400 text-sm mb-3">🔑 <strong>Credenciales disponibles:</strong></p>
+          <div className="bg-slate-700/30 rounded-lg p-4 text-sm space-y-2">
+            <div className="border-b border-slate-600 pb-2">
+              <p className="text-purple-300 font-medium">👑 Software Owner:</p>
+              <p className="text-slate-300"><strong>Usuario:</strong> adminpro</p>
+              <p className="text-slate-300"><strong>Password:</strong> @Teamo1110a</p>
+            </div>
+            <div className="border-b border-slate-600 pb-2">
+              <p className="text-blue-300 font-medium">🏢 Empresa:</p>
+              <p className="text-slate-300"><strong>Email:</strong> empresa@test.com</p>
+              <p className="text-slate-300"><strong>Password:</strong> empresa123</p>
+            </div>
+            <div>
+              <p className="text-green-300 font-medium">👤 Empleado:</p>
+              <p className="text-slate-300"><strong>Email:</strong> empleado@test.com</p>
+              <p className="text-slate-300"><strong>Password:</strong> empleado123</p>
+            </div>
           </div>
         </div>
         
@@ -96,7 +109,7 @@ export function LoginForm() {
           onClick={handleDemoLogin}
           className="w-full py-2 px-4 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors"
         >
-          Acceso Rápido Demo
+          🚀 Acceso Rápido Demo
         </button>
       </div>
     </div>

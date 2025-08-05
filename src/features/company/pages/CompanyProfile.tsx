@@ -1,144 +1,246 @@
-import { Building2, MapPin, Phone, Mail, FileText, Edit3, Save, X } from 'lucide-react'
-import { useState } from 'react'
+import { useAuth } from '../../auth/AuthProvider'
+import { Building2, Mail, Phone, MapPin, Calendar, Shield, User, Crown } from 'lucide-react'
 
 export function CompanyProfile() {
-  const [isEditing, setIsEditing] = useState(false)
-  const [companyData, setCompanyData] = useState({
-    name: 'Mi Empresa S.A.',
-    ruc: '20123456789',
-    address: 'Av. Principal 123, Lima, Perú',
-    phone: '+51 1 234-5678',
-    email: 'contacto@miempresa.com',
-    website: 'www.miempresa.com',
-    description: 'Empresa líder en soluciones tecnológicas'
-  })
+  const { user } = useAuth()
 
-  const handleSave = () => {
-    setIsEditing(false)
-    // Aquí iría la lógica para guardar los datos
+  const getRoleInfo = (role: string) => {
+    switch (role) {
+      case 'software_owner':
+        return {
+          icon: Crown,
+          label: 'Dueño del Software',
+          color: 'text-purple-400',
+          bgColor: 'bg-purple-500/20'
+        }
+      case 'company_owner':
+        return {
+          icon: Shield,
+          label: 'Dueño de la Empresa',
+          color: 'text-blue-400',
+          bgColor: 'bg-blue-500/20'
+        }
+      case 'employee':
+        return {
+          icon: User,
+          label: 'Empleado',
+          color: 'text-green-400',
+          bgColor: 'bg-green-500/20'
+        }
+      case 'demo':
+        return {
+          icon: User,
+          label: 'Usuario Demo',
+          color: 'text-orange-400',
+          bgColor: 'bg-orange-500/20'
+        }
+      default:
+        return {
+          icon: User,
+          label: 'Usuario',
+          color: 'text-gray-400',
+          bgColor: 'bg-gray-500/20'
+        }
+    }
   }
 
+  const roleInfo = getRoleInfo(user?.role || '')
+  const RoleIcon = roleInfo.icon
+
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Mi Empresa</h1>
-          <p className="text-slate-400">Gestiona la información de tu empresa</p>
+          <h1 className="text-3xl font-bold text-white">Mi Perfil</h1>
+          <p className="text-slate-400 mt-1">Información personal y de la empresa</p>
         </div>
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-        >
-          {isEditing ? <X size={18} /> : <Edit3 size={18} />}
-          {isEditing ? 'Cancelar' : 'Editar'}
-        </button>
       </div>
 
-      {/* Company Info Card */}
-      <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-            <Building2 size={32} className="text-white" />
-          </div>
-          <div>
-            {isEditing ? (
-              <input
-                type="text"
-                value={companyData.name}
-                onChange={(e) => setCompanyData({...companyData, name: e.target.value})}
-                className="text-xl font-bold bg-slate-700 text-white px-3 py-1 rounded border border-slate-600"
-              />
-            ) : (
-              <h2 className="text-xl font-bold text-white">{companyData.name}</h2>
-            )}
-            <p className="text-slate-400">RUC: {companyData.ruc}</p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <MapPin size={18} className="text-slate-400" />
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-300 mb-1">Dirección</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={companyData.address}
-                    onChange={(e) => setCompanyData({...companyData, address: e.target.value})}
-                    className="w-full bg-slate-700 text-white px-3 py-2 rounded border border-slate-600"
-                  />
-                ) : (
-                  <p className="text-white">{companyData.address}</p>
-                )}
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Información Personal */}
+        <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
+              <User className="w-6 h-6 text-white" />
             </div>
-
-            <div className="flex items-center gap-3">
-              <Phone size={18} className="text-slate-400" />
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-300 mb-1">Teléfono</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={companyData.phone}
-                    onChange={(e) => setCompanyData({...companyData, phone: e.target.value})}
-                    className="w-full bg-slate-700 text-white px-3 py-2 rounded border border-slate-600"
-                  />
-                ) : (
-                  <p className="text-white">{companyData.phone}</p>
-                )}
-              </div>
+            <div>
+              <h2 className="text-xl font-semibold text-white">Información Personal</h2>
+              <p className="text-slate-400 text-sm">Datos del usuario</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Mail size={18} className="text-slate-400" />
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-300 mb-1">Email</label>
-                {isEditing ? (
-                  <input
-                    type="email"
-                    value={companyData.email}
-                    onChange={(e) => setCompanyData({...companyData, email: e.target.value})}
-                    className="w-full bg-slate-700 text-white px-3 py-2 rounded border border-slate-600"
-                  />
-                ) : (
-                  <p className="text-white">{companyData.email}</p>
-                )}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Nombre Completo
+              </label>
+              <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                <User className="w-5 h-5 text-slate-400" />
+                <span className="text-white">{user?.name}</span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <FileText size={18} className="text-slate-400" />
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-300 mb-1">Sitio Web</label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={companyData.website}
-                    onChange={(e) => setCompanyData({...companyData, website: e.target.value})}
-                    className="w-full bg-slate-700 text-white px-3 py-2 rounded border border-slate-600"
-                  />
-                ) : (
-                  <p className="text-white">{companyData.website}</p>
-                )}
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Correo Electrónico
+              </label>
+              <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                <Mail className="w-5 h-5 text-slate-400" />
+                <span className="text-white">{user?.email}</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Rol en el Sistema
+              </label>
+              <div className={`flex items-center gap-3 p-3 rounded-lg ${roleInfo.bgColor}`}>
+                <RoleIcon className={`w-5 h-5 ${roleInfo.color}`} />
+                <span className={`font-medium ${roleInfo.color}`}>{roleInfo.label}</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Fecha de Registro
+              </label>
+              <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                <Calendar className="w-5 h-5 text-slate-400" />
+                <span className="text-white">
+                  {user?.created_at ? new Date(user.created_at).toLocaleDateString('es-ES') : 'No disponible'}
+                </span>
               </div>
             </div>
           </div>
         </div>
 
-        {isEditing && (
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={handleSave}
-              className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <Save size={18} />
-              Guardar Cambios
-            </button>
+        {/* Información de la Empresa */}
+        {user?.companyName && (
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Mi Empresa</h2>
+                <p className="text-slate-400 text-sm">Información empresarial</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Nombre de la Empresa
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                  <Building2 className="w-5 h-5 text-slate-400" />
+                  <span className="text-white">{user.companyName}</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  ID de la Empresa
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                  <Shield className="w-5 h-5 text-slate-400" />
+                  <span className="text-white font-mono text-sm">{user.companyId}</span>
+                </div>
+              </div>
+
+              {user.isDemo && (
+                <div className="p-4 bg-orange-500/20 border border-orange-500/30 rounded-lg">
+                  <div className="flex items-center gap-2 text-orange-400 mb-2">
+                    <Shield className="w-5 h-5" />
+                    <span className="font-medium">Cuenta Demo</span>
+                  </div>
+                  <p className="text-orange-300 text-sm">
+                    Esta es una cuenta de demostración con datos de prueba.
+                  </p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  RNC/RUC
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                  <span className="text-slate-400 text-sm">123456789</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Teléfono
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                  <Phone className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-400 text-sm">+1 (809) 555-0123</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Dirección
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-slate-700/50 rounded-lg">
+                  <MapPin className="w-5 h-5 text-slate-400" />
+                  <span className="text-slate-400 text-sm">Santo Domingo, República Dominicana</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Solo información personal para software owner */}
+        {user?.role === 'software_owner' && !user?.companyName && (
+          <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-6">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                <Crown className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-white">Administración del Software</h2>
+                <p className="text-slate-400 text-sm">Panel de control principal</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="p-4 bg-purple-500/20 border border-purple-500/30 rounded-lg">
+                <div className="flex items-center gap-2 text-purple-400 mb-2">
+                  <Crown className="w-5 h-5" />
+                  <span className="font-medium">Acceso Total</span>
+                </div>
+                <p className="text-purple-300 text-sm">
+                  Tienes acceso completo a todas las funciones del sistema y puedes administrar todas las empresas.
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-2">
+                  Permisos
+                </label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-green-400 text-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    Gestión de empresas
+                  </div>
+                  <div className="flex items-center gap-2 text-green-400 text-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    Administración de usuarios
+                  </div>
+                  <div className="flex items-center gap-2 text-green-400 text-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    Configuración del sistema
+                  </div>
+                  <div className="flex items-center gap-2 text-green-400 text-sm">
+                    <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                    Reportes globales
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

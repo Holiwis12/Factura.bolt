@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { CompanySidebar } from '../components/company/CompanySidebar'
-import { CompanyTopbar } from '../components/company/CompanyTopbar'
+import { AdminSidebar } from '../../components/admin/AdminSidebar'
+import { AdminTopbar } from '../../components/admin/AdminTopbar'
 
-export function CompanyLayout() {
+export function AdminLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false)
 
   const handleMobileMenuToggle = () => {
-    console.log('Toggle clicked, current state:', isMobileSidebarOpen)
+    console.log('Admin toggle clicked, current state:', isMobileSidebarOpen)
     setIsMobileSidebarOpen(prev => !prev)
   }
 
   const handleMobileMenuClose = () => {
-    console.log('Closing mobile menu')
+    console.log('Closing admin mobile menu')
     setIsMobileSidebarOpen(false)
   }
 
@@ -20,7 +20,7 @@ export function CompanyLayout() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <div className="flex h-screen overflow-hidden">
         {/* Sidebar */}
-        <CompanySidebar 
+        <AdminSidebar 
           isMobileOpen={isMobileSidebarOpen}
           onMobileClose={handleMobileMenuClose}
         />
@@ -28,7 +28,7 @@ export function CompanyLayout() {
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {/* Topbar */}
-          <CompanyTopbar onMobileMenuToggle={handleMobileMenuToggle} />
+          <AdminTopbar onMobileMenuToggle={handleMobileMenuToggle} />
           
           {/* Page Content */}
           <main className="flex-1 overflow-y-auto p-4 md:p-6">

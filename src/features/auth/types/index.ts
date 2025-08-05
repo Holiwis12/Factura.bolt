@@ -2,7 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'company' | 'demo';
+  role: 'software_owner' | 'company_owner' | 'employee' | 'demo';
   companyId?: string;
   companyName?: string;
   isDemo?: boolean;
@@ -30,7 +30,7 @@ export interface AuthResponse {
 }
 
 export interface AuthContextType extends AuthState {
-  login: (credentials: LoginCredentials) => Promise<void>;
-  loginAsDemo: () => void;
+  login: (email: string, password: string) => Promise<boolean>;
+  loginAsDemo: () => Promise<boolean>;
   logout: () => Promise<void>;
 }

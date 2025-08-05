@@ -10,15 +10,14 @@ import {
   ShoppingCart,
   Calculator,
   FileSpreadsheet,
-  Building2,
   CreditCard,
   TrendingUp,
-  X
+  X,
+  Building2
 } from 'lucide-react'
 
 const companyMenuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/company' },
-  { icon: Building2, label: 'Mi Empresa', path: '/company/profile' },
   { icon: ShoppingCart, label: 'Punto de Venta', path: '/company/pos' },
   { icon: FileText, label: 'Facturas', path: '/company/invoices' },
   { icon: Package, label: 'Inventario', path: '/company/inventory' },
@@ -84,18 +83,18 @@ export function CompanySidebar({ isMobileOpen = false, onMobileClose }: CompanyS
         <div className="p-4 border-b border-slate-700">
           <div className="flex items-center justify-between">
             <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : ''}`}>
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center font-bold text-white">
-                E
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
               </div>
               {!collapsed && (
                 <div className="hidden md:block">
-                  <h2 className="font-bold text-white">Mi Empresa</h2>
+                  <h2 className="font-bold text-white">Sistema</h2>
                   <p className="text-xs text-slate-400">Panel de Control</p>
                 </div>
               )}
               {!collapsed && (
                 <div className="md:hidden">
-                  <h2 className="font-bold text-white text-sm">Mi Empresa</h2>
+                  <h2 className="font-bold text-white text-sm">Sistema</h2>
                   <p className="text-xs text-slate-400">Panel</p>
                 </div>
               )}
@@ -113,6 +112,7 @@ export function CompanySidebar({ isMobileOpen = false, onMobileClose }: CompanyS
             <button
               onClick={onMobileClose}
               className="md:hidden p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-white"
+              aria-label="Cerrar menú"
             >
               <X size={18} />
             </button>
@@ -135,7 +135,6 @@ export function CompanySidebar({ isMobileOpen = false, onMobileClose }: CompanyS
                     : 'text-slate-300 hover:bg-slate-700/50 hover:text-white'
                   }
                   ${collapsed ? 'justify-center' : ''}
-                  /* Mobile touch targets */
                   min-h-[44px] md:min-h-[36px]
                 `}
                 title={collapsed ? item.label : undefined}
@@ -148,21 +147,6 @@ export function CompanySidebar({ isMobileOpen = false, onMobileClose }: CompanyS
             )
           })}
         </nav>
-
-        {/* Company Info */}
-        <div className="p-3 border-t border-slate-700">
-          <div className={`flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-700/50 ${collapsed ? 'justify-center' : ''}`}>
-            <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
-              C
-            </div>
-            {!collapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">Mi Empresa S.A.</p>
-                <p className="text-xs text-slate-400">RNC: 123456789</p>
-              </div>
-            )}
-          </div>
-        </div>
       </aside>
     </>
   )

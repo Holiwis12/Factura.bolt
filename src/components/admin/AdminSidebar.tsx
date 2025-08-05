@@ -5,10 +5,12 @@ import {
   Building2, 
   Users, 
   Settings, 
-  BarChart3,
-  Shield,
   ChevronLeft,
   ChevronRight,
+  FileText,
+  BarChart3,
+  Shield,
+  CreditCard,
   X
 } from 'lucide-react'
 
@@ -16,6 +18,8 @@ const adminMenuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', path: '/admin' },
   { icon: Building2, label: 'Empresas', path: '/admin/companies' },
   { icon: Users, label: 'Usuarios', path: '/admin/users' },
+  { icon: FileText, label: 'Facturas', path: '/admin/invoices' },
+  { icon: CreditCard, label: 'Pagos', path: '/admin/payments' },
   { icon: BarChart3, label: 'Reportes', path: '/admin/reports' },
   { icon: Shield, label: 'Seguridad', path: '/admin/security' },
   { icon: Settings, label: 'Configuración', path: '/admin/settings' }
@@ -88,7 +92,7 @@ export function AdminSidebar({ isMobileOpen = false, onMobileClose }: AdminSideb
               {!collapsed && (
                 <div className="md:hidden">
                   <h2 className="font-bold text-white text-sm">Admin</h2>
-                  <p className="text-xs text-slate-400">Panel</p>
+                  <p className="text-xs text-slate-400">Sistema</p>
                 </div>
               )}
             </div>
@@ -101,10 +105,11 @@ export function AdminSidebar({ isMobileOpen = false, onMobileClose }: AdminSideb
               {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
             </button>
 
-            {/* Mobile close button */}
+            {/* Mobile close button - SOLO visible en móvil */}
             <button
               onClick={onMobileClose}
               className="md:hidden p-1.5 hover:bg-slate-700 rounded-lg transition-colors text-slate-400 hover:text-white"
+              aria-label="Cerrar menú"
             >
               <X size={18} />
             </button>
@@ -144,13 +149,13 @@ export function AdminSidebar({ isMobileOpen = false, onMobileClose }: AdminSideb
         {/* Admin Info */}
         <div className="p-3 border-t border-slate-700">
           <div className={`flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-700/50 ${collapsed ? 'justify-center' : ''}`}>
-            <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-pink-500 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
-              A
+            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-full flex items-center justify-center text-white font-medium flex-shrink-0">
+              S
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white truncate">Administrador</p>
-                <p className="text-xs text-slate-400">Sistema</p>
+                <p className="text-sm font-medium text-white truncate">Sistema Admin</p>
+                <p className="text-xs text-slate-400">v2.1.0</p>
               </div>
             )}
           </div>

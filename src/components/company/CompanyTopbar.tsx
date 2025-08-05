@@ -11,7 +11,7 @@ export function CompanyTopbar({ onMobileMenuToggle }: CompanyTopbarProps) {
   const [showUserMenu, setShowUserMenu] = useState(false)
   const [showSearch, setShowSearch] = useState(false)
   const { logout, user } = useAuth()
-  const { unreadCount, togglePanel } = useNotifications()
+  const { unreadCount, isOpen: isNotificationOpen, togglePanel } = useNotifications()
 
   const handleLogout = async () => {
     try {
@@ -31,6 +31,22 @@ export function CompanyTopbar({ onMobileMenuToggle }: CompanyTopbarProps) {
     console.log('Navigating to settings...')
   }
 
+  const handleNotificationClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Notification bell clicked, current state:', isNotificationOpen)
+    togglePanel()
+  }
+
+  const handleMobileMenuClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    console.log('Mobile menu button clicked')
+    if (onMobileMenuToggle) {
+      onMobileMenuToggle()
+    }
+  }
+
   return (
     <header className="bg-slate-800/50 border-b border-slate-700 px-4 md:px-6 py-3 md:py-4">
       <div className="flex items-center justify-between">
@@ -38,8 +54,10 @@ export function CompanyTopbar({ onMobileMenuToggle }: CompanyTopbarProps) {
         <div className="flex items-center gap-2 md:gap-4">
           {/* Mobile Menu Button */}
           <button
-            onClick={onMobileMenuToggle}
+            onClick={handleMobileMenuClick}
             className="md:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            aria-label="Abrir menú"
+            type="button"
           >
             <Menu size={20} />
           </button>
@@ -63,6 +81,7 @@ export function CompanyTopbar({ onMobileMenuToggle }: CompanyTopbarProps) {
           <button
             onClick={() => setShowSearch(!showSearch)}
             className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            aria-label="Buscar"
           >
             <Search size={18} />
           </button>
@@ -73,8 +92,10 @@ export function CompanyTopbar({ onMobileMenuToggle }: CompanyTopbarProps) {
           {/* Notifications */}
           <div className="relative">
             <button 
-              onClick={togglePanel}
+              onClick={handleNotificationClick}
               className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+              aria-label="Notificaciones"
+              type="button"
             >
               <Bell size={18} className="md:w-5 md:h-5" />
               {unreadCount > 0 && (

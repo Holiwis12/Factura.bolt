@@ -106,10 +106,16 @@ export function NotificationsProvider({ children }: NotificationsProviderProps) 
   }, [])
 
   const togglePanel = useCallback(() => {
-    setIsOpen(prev => !prev)
-  }, [])
+    console.log('Toggle panel called, current state:', isOpen)
+    setIsOpen(prev => {
+      const newState = !prev
+      console.log('Setting panel to:', newState)
+      return newState
+    })
+  }, [isOpen])
 
   const closePanel = useCallback(() => {
+    console.log('Close panel called')
     setIsOpen(false)
   }, [])
 

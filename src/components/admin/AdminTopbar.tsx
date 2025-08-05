@@ -28,6 +28,7 @@ export function AdminTopbar({ onMobileMenuToggle }: AdminTopbarProps) {
           <button
             onClick={onMobileMenuToggle}
             className="md:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            aria-label="Abrir menú"
           >
             <Menu size={20} />
           </button>
@@ -51,6 +52,7 @@ export function AdminTopbar({ onMobileMenuToggle }: AdminTopbarProps) {
           <button
             onClick={() => setShowSearch(!showSearch)}
             className="lg:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            aria-label="Buscar"
           >
             <Search size={18} />
           </button>
@@ -60,7 +62,7 @@ export function AdminTopbar({ onMobileMenuToggle }: AdminTopbarProps) {
         <div className="flex items-center gap-2 md:gap-4">
           {/* Notifications */}
           <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors">
-            <Bell size={18} md:size={20} />
+            <Bell size={18} className="md:w-5 md:h-5" />
             <span className="absolute -top-1 -right-1 w-4 h-4 md:w-5 md:h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
               3
             </span>

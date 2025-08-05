@@ -8,7 +8,7 @@ export function LoginPage() {
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const { login } = useAuth()
+  const { login, loginAsDemo } = useAuth()
   const { addNotification } = useNotifications()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,12 +44,18 @@ export function LoginPage() {
   const handleDemoAccess = async () => {
     setIsLoading(true)
     try {
-      const success = await login('demo@empresa.com', 'demo123')
+      const success = await loginAsDemo()
       if (success) {
         addNotification({
           type: 'success',
           title: 'Acceso demo activado',
           message: 'Bienvenido María González - Empresa Demo S.A.C.'
+        })
+      } else {
+        addNotification({
+          type: 'error',
+          title: 'Error en demo',
+          message: 'No se pudo acceder al modo demo'
         })
       }
     } catch (error) {
@@ -64,11 +70,11 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-slate-900 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-600 rounded-full mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
             <Building2 className="w-8 h-8 text-white" />
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">
@@ -82,19 +88,19 @@ export function LoginPage() {
         {/* Login Form */}
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email Field */}
+            {/* Email/Username Field - ARREGLADO */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Correo electrónico
+                Usuario o Email
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
-                  type="email"
+                  type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  placeholder="tu@email.com"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  placeholder="adminpro o tu@email.com"
                   required
                 />
               </div>
@@ -111,7 +117,7 @@ export function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-12 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
                   required
                 />
@@ -129,7 +135,7 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-purple-600 hover:bg-purple-700 disabled:bg-purple-800 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white font-medium py-3 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-800"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
@@ -142,8 +148,27 @@ export function LoginPage() {
             </button>
           </form>
 
-          {/* Demo Access */}
+          {/* Credentials Info */}
           <div className="mt-6 pt-6 border-t border-slate-700">
+            <div className="bg-slate-700/30 rounded-lg p-4 mb-4">
+              <h3 className="text-sm font-medium text-slate-300 mb-3">🔑 Credenciales de prueba:</h3>
+              <div className="space-y-2 text-xs">
+                <div className="flex justify-between">
+                  <span className="text-purple-300">👑 Software Owner:</span>
+                  <span className="text-slate-300">adminpro / @Teamo1110a</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-blue-300">🏢 Empresa:</span>
+                  <span className="text-slate-300">empresa@test.com / empresa123</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-green-300">👤 Empleado:</span>
+                  <span className="text-slate-300">empleado@test.com / empleado123</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Demo Access */}
             <button
               onClick={handleDemoAccess}
               disabled={isLoading}
@@ -155,21 +180,12 @@ export function LoginPage() {
                   Accediendo...
                 </div>
               ) : (
-                'Acceso Demo'
+                '🚀 Acceso Demo Rápido'
               )}
             </button>
             <p className="text-xs text-slate-400 text-center mt-2">
               Prueba el sistema sin registrarte
             </p>
-          </div>
-
-          {/* Credentials Info */}
-          <div className="mt-6 p-4 bg-slate-700/50 rounded-lg">
-            <h3 className="text-sm font-medium text-slate-300 mb-2">Credenciales de prueba:</h3>
-            <div className="text-xs text-slate-400 space-y-1">
-              <div><strong>Admin:</strong> admin@sistema.com / admin123</div>
-              <div><strong>Empresa:</strong> empresa@test.com / empresa123</div>
-            </div>
           </div>
         </div>
       </div>

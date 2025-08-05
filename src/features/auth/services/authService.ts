@@ -8,7 +8,7 @@ const DEMO_COMPANY_USER: User = {
   id: 'demo-company-001',
   name: 'María González',
   email: 'demo@empresa.com',
-  role: 'company',
+  role: 'demo',
   companyId: 'company-demo-001',
   companyName: 'Empresa Demo S.A.C.',
   isDemo: true,
@@ -17,16 +17,32 @@ const DEMO_COMPANY_USER: User = {
   updated_at: new Date().toISOString()
 };
 
-// Usuarios locales para desarrollo
+// Usuarios locales para desarrollo - SIMPLIFICADO
 const LOCAL_USERS = [
+  {
+    email: 'adminpro',
+    password: '@Teamo1110a',
+    user: {
+      id: 'software-owner-001',
+      name: 'Administrador del Software',
+      email: 'adminpro@sistema.com',
+      role: 'software_owner' as const,
+      companyId: null,
+      companyName: null,
+      isDemo: false,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  },
   {
     email: 'admin@sistema.com',
     password: 'admin123',
     user: {
-      id: 'admin-001',
-      name: 'Administrador Sistema',
+      id: 'software-owner-002',
+      name: 'Admin Sistema',
       email: 'admin@sistema.com',
-      role: 'admin' as const,
+      role: 'software_owner' as const,
       companyId: null,
       companyName: null,
       isDemo: false,
@@ -39,10 +55,26 @@ const LOCAL_USERS = [
     email: 'empresa@test.com',
     password: 'empresa123',
     user: {
-      id: 'company-001',
-      name: 'Usuario Empresa',
+      id: 'company-owner-001',
+      name: 'Juan Pérez',
       email: 'empresa@test.com',
-      role: 'company' as const,
+      role: 'company_owner' as const,
+      companyId: 'company-001',
+      companyName: 'Empresa Test S.A.C.',
+      isDemo: false,
+      is_active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  },
+  {
+    email: 'empleado@test.com',
+    password: 'empleado123',
+    user: {
+      id: 'employee-001',
+      name: 'Ana García',
+      email: 'empleado@test.com',
+      role: 'employee' as const,
       companyId: 'company-001',
       companyName: 'Empresa Test S.A.C.',
       isDemo: false,
@@ -59,22 +91,30 @@ export const authService = {
       // Simular delay para UX
       await new Promise(resolve => setTimeout(resolve, 500));
 
+      console.log('🔍 Intentando login con:', credentials.email);
+
       // Buscar usuario local primero
       const localUser = LOCAL_USERS.find(
         u => u.email === credentials.email && u.password === credentials.password
       );
 
       if (localUser) {
+        console.log('✅ Usuario local encontrado:', localUser.user.role);
         return {
           data: localUser.user,
           status: 200
         };
       }
 
-      // Si no es usuario local, intentar con Supabase
+      console.log('❌ Usuario no encontrado en usuarios locales');
+
+      // Si no es usuario local, intentar con Supabase (simplificado)
       const { data, error } = await supabase.auth.signInWithPassword(credentials);
       
-      if (error) throw error;
+      if (error) {
+        console.log('❌ Error Supabase:', error.message);
+        throw error;
+      }
       
       // Obtener perfil del usuario
       const { data: profile } = await supabase
@@ -93,7 +133,7 @@ export const authService = {
         id: data.user.id,
         name: profile?.name || data.user.email!,
         email: data.user.email!,
-        role: profile?.role || 'company',
+        role: profile?.role || 'employee',
         companyId: profile?.organization_id,
         companyName: profile?.organizations?.name,
         isDemo: false,
@@ -108,6 +148,7 @@ export const authService = {
         token: data.session?.access_token
       };
     } catch (error) {
+      console.log('❌ Error en login:', error);
       return {
         error: error instanceof Error ? error.message : 'Credenciales inválidas',
         status: 401
