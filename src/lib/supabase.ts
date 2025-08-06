@@ -1,6 +1,47 @@
 import { createClient } from '@supabase/supabase-js';
+import { APP_CONFIG } from './config';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://dziqhfdtejeuwuubqjeo.supabase.co';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6aXFoZmR0ZWpldXd1dWJxamVvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQyNDcxODYsImV4cCI6MjA2OTgyMzE4Nn0.JCHoe_Ly17FOA5YREUnOGklQU4s6XCz10P_gRms5lc8';
+console.log('🔧 Configurando Supabase...');
+console.log('📍 URL:', APP_CONFIG.supabase.url);
+console.log('🔑 Anon Key:', APP_CONFIG.supabase.anonKey ? 'Configurada' : 'No configurada');
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+if (!APP_CONFIG.supabase.url || !APP_CONFIG.supabase.anonKey) {
+  console.warn('⚠️ Credenciales de Supabase no configuradas, usando modo local');
+}
+
+export const supabase = createClient(
+  APP_CONFIG.supabase.url || 'https://placeholder.supabase.co',
+  APP_CONFIG.supabase.anonKey || 'placeholder-key',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: true
+    }
+  }
+);
+
+// Verificador de conexión
+export const verifySupabaseConnection = async () => {
+  try {
+    if (!APP_CONFIG.supabase.url || !APP_CONFIG.supabase.anonKey) {
+      console.log('⚠️ Supabase no configurado, usando modo local');
+      return false;
+    }
+
+    const { data, error } = await supabase.from('profiles').select('count').limit(1);
+    if (error) {
+      console.warn('⚠️ Error conectando a Supabase:', error.message);
+      return false;
+    }
+    
+    console.log('✅ Supabase connection verified');
+    return true;
+  } catch (error) {
+    console.warn('⚠️ Supabase connection error:', error);
+    return false;
+  }
+};
+
+// Verificar conexión al inicializar
+verifySupabaseConnection();

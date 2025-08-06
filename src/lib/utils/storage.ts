@@ -1,5 +1,5 @@
 export const storage = {
-  get: <T = any>(key: string): T | null => {
+  get: <T>(key: string): T | null => {
     try {
       const item = localStorage.getItem(key);
       return item ? JSON.parse(item) : null;
@@ -7,15 +7,15 @@ export const storage = {
       return null;
     }
   },
-
-  set: (key: string, value: any): void => {
+  
+  set: <T>(key: string, value: T): void => {
     try {
       localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
       console.error('Error saving to localStorage:', error);
     }
   },
-
+  
   remove: (key: string): void => {
     try {
       localStorage.removeItem(key);
@@ -23,7 +23,7 @@ export const storage = {
       console.error('Error removing from localStorage:', error);
     }
   },
-
+  
   clear: (): void => {
     try {
       localStorage.clear();

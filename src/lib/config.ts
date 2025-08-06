@@ -1,9 +1,14 @@
 export const APP_CONFIG = {
-  storage: {
-    demoUserKey: 'demo-user',
-    authTokenKey: 'auth-token'
+  supabase: {
+    url: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
   },
-  api: {
-    baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+  storage: {
+    userKey: 'billing_user',
+    tokenKey: 'billing_token',
+  },
+  app: {
+    name: 'Sistema de Facturación',
+    version: '1.0.0',
   }
 };

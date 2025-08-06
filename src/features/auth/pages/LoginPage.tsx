@@ -49,7 +49,7 @@ export function LoginPage() {
         addNotification({
           type: 'success',
           title: 'Acceso demo activado',
-          message: 'Bienvenido María González - Empresa Demo S.A.C.'
+          message: 'Bienvenido al modo demostración'
         })
       } else {
         addNotification({
@@ -88,7 +88,7 @@ export function LoginPage() {
         {/* Login Form */}
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700 rounded-xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Email/Username Field - ARREGLADO */}
+            {/* Email/Username Field */}
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
                 Usuario o Email
@@ -100,7 +100,7 @@ export function LoginPage() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
-                  placeholder="adminpro o tu@email.com"
+                  placeholder="Ingresa tu usuario o email"
                   required
                 />
               </div>
@@ -148,27 +148,8 @@ export function LoginPage() {
             </button>
           </form>
 
-          {/* Credentials Info */}
+          {/* Demo Access - SOLO para Company Owner */}
           <div className="mt-6 pt-6 border-t border-slate-700">
-            <div className="bg-slate-700/30 rounded-lg p-4 mb-4">
-              <h3 className="text-sm font-medium text-slate-300 mb-3">🔑 Credenciales de prueba:</h3>
-              <div className="space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="text-purple-300">👑 Software Owner:</span>
-                  <span className="text-slate-300">adminpro / @Teamo1110a</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-blue-300">🏢 Empresa:</span>
-                  <span className="text-slate-300">empresa@test.com / empresa123</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-green-300">👤 Empleado:</span>
-                  <span className="text-slate-300">empleado@test.com / empleado123</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Demo Access */}
             <button
               onClick={handleDemoAccess}
               disabled={isLoading}
@@ -180,11 +161,11 @@ export function LoginPage() {
                   Accediendo...
                 </div>
               ) : (
-                '🚀 Acceso Demo Rápido'
+                '🚀 Modo Demostración'
               )}
             </button>
             <p className="text-xs text-slate-400 text-center mt-2">
-              Prueba el sistema sin registrarte
+              Prueba el sistema antes de registrarte
             </p>
           </div>
         </div>

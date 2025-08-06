@@ -4,34 +4,58 @@ import { useAuth } from '../hooks/useAuth';
 
 export function LoginForm() {
   const navigate = useNavigate();
-  const { login, loginAsDemo } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { login, loginAsDemo, loading } = useAuth();
+  const [formLoading, setFormLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setFormLoading(true);
     setError('');
 
     const formData = new FormData(e.currentTarget);
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    console.log('📝 Datos del formulario:', { email, password: '***' });
+
+    if (!email || !password) {
+      setError('Por favor ingresa usuario y contraseña');
+      setFormLoading(false);
+      return;
+    }
     
     try {
-      await login({
-        email: formData.get('email') as string,
-        password: formData.get('password') as string
-      });
-      navigate('/');
+      console.log('🔐 Llamando a login...');
+      await login({ email, password });
+      console.log('✅ Login exitoso, navegando...');
+      navigate('/', { replace: true });
     } catch (err) {
+      console.error('❌ Error en handleSubmit:', err);
       setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
     } finally {
-      setLoading(false);
+      setFormLoading(false);
     }
   };
 
-  const handleDemoLogin = () => {
-    loginAsDemo();
-    navigate('/');
+  const handleDemoLogin = async () => {
+    setFormLoading(true);
+    setError('');
+    
+    try {
+      console.log('🚀 Iniciando demo...');
+      await loginAsDemo();
+      console.log('✅ Demo exitoso, navegando...');
+      navigate('/', { replace: true });
+    } catch (err) {
+      console.error('❌ Error en demo login:', err);
+      setError('Error al acceder al modo demo');
+    } finally {
+      setFormLoading(false);
+    }
   };
+
+  const isLoading = loading || formLoading;
 
   return (
     <div className="w-full max-w-md p-8 bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700 shadow-xl">
@@ -55,8 +79,9 @@ export function LoginForm() {
             id="email"
             name="email"
             required
-            className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            placeholder="adminpro"
+            disabled={isLoading}
+            className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Ingresa tu usuario o email"
           />
         </div>
 
@@ -69,17 +94,18 @@ export function LoginForm() {
             id="password"
             name="password"
             required
-            className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
-            placeholder="@Teamo1110a"
+            disabled={isLoading}
+            className="w-full px-4 py-2 bg-slate-700/50 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            placeholder="Ingresa tu contraseña"
           />
         </div>
 
         <button
           type="submit"
-          disabled={loading}
+          disabled={isLoading}
           className="w-full py-2 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg font-medium hover:shadow-lg hover:shadow-purple-500/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+          {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
         </button>
       </form>
 
@@ -107,7 +133,8 @@ export function LoginForm() {
         
         <button
           onClick={handleDemoLogin}
-          className="w-full py-2 px-4 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors"
+          disabled={isLoading}
+          className="w-full py-2 px-4 bg-slate-700 text-white rounded-lg font-medium hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           🚀 Acceso Rápido Demo
         </button>

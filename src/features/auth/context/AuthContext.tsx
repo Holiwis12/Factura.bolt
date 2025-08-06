@@ -1,129 +1,118 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useEffect, useState, ReactNode } from 'react';
 import { authService } from '../services/authService';
-import type { AuthContextType, AuthState, LoginCredentials } from '../types';
+import type { User, AuthContextType, LoginCredentials } from '../types';
 
 export const AuthContext = createContext<AuthContextType | null>(null);
 
-const initialState: AuthState = {
-  user: null,
-  loading: true,
-  error: null
-};
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>(initialState);
+export function AuthProvider({ children }: AuthProviderProps) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    checkAuth();
+    console.log('🔄 Inicializando AuthProvider...');
+    initializeAuth();
   }, []);
 
-  const checkAuth = async () => {
+  const initializeAuth = async () => {
     try {
-      console.log('🔍 Verificando autenticación...');
-      const user = await authService.getCurrentUser();
-      console.log('👤 Usuario actual:', user?.role || 'ninguno');
-      setState(prev => ({ ...prev, user, loading: false }));
+      setLoading(true);
+      console.log('🔍 Verificando usuario actual...');
+      
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        console.log('✅ Usuario encontrado:', currentUser.name);
+        setUser(currentUser);
+      } else {
+        console.log('❌ No hay usuario autenticado');
+      }
     } catch (error) {
-      console.log('❌ Error verificando auth:', error);
-      setState(prev => ({
-        ...prev,
-        error: 'Error al verificar autenticación',
-        loading: false
-      }));
+      console.error('❌ Error inicializando auth:', error);
+    } finally {
+      setLoading(false);
+      console.log('✅ AuthProvider inicializado');
     }
   };
 
-  const login = async (credentials: LoginCredentials) => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    
+  const login = async (credentials: LoginCredentials): Promise<void> => {
     try {
-      console.log('🚀 Iniciando login...');
+      setLoading(true);
+      console.log('🔐 Intentando login...');
+      
       const response = await authService.login(credentials);
       
       if (response.error) {
-        setState(prev => ({
-          ...prev,
-          error: response.error,
-          loading: false
-        }));
+        console.error('❌ Error en login:', response.error);
         throw new Error(response.error);
       }
-
-      console.log('✅ Login exitoso:', response.data?.role);
-      setState(prev => ({
-        ...prev,
-        user: response.data!,
-        loading: false
-      }));
+      
+      if (response.data) {
+        console.log('✅ Login exitoso:', response.data.name);
+        setUser(response.data);
+      } else {
+        throw new Error('No se recibieron datos del usuario');
+      }
     } catch (error) {
-      console.log('❌ Error en login:', error);
-      setState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Error al iniciar sesión',
-        loading: false
-      }));
+      console.error('❌ Error en login:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const loginAsDemo = async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    
+  const loginAsDemo = async (): Promise<void> => {
     try {
-      console.log('🚀 Iniciando demo...');
+      setLoading(true);
+      console.log('🚀 Iniciando modo demo...');
+      
       const response = await authService.loginAsDemo();
       
       if (response.error) {
-        setState(prev => ({
-          ...prev,
-          error: response.error,
-          loading: false
-        }));
         throw new Error(response.error);
       }
-
-      console.log('✅ Demo exitoso');
-      setState(prev => ({
-        ...prev,
-        user: response.data!,
-        loading: false
-      }));
+      
+      if (response.data) {
+        console.log('✅ Demo login exitoso');
+        setUser(response.data);
+      }
     } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: 'Error al acceder al modo demo',
-        loading: false
-      }));
+      console.error('❌ Error en demo login:', error);
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const logout = async () => {
-    setState(prev => ({ ...prev, loading: true }));
-    
+  const logout = async (): Promise<void> => {
     try {
+      setLoading(true);
       console.log('🚪 Cerrando sesión...');
+      
       await authService.logout();
-      setState({ ...initialState, loading: false });
-      console.log('✅ Sesión cerrada');
+      setUser(null);
+      
+      console.log('✅ Logout exitoso');
     } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: 'Error al cerrar sesión',
-        loading: false
-      }));
+      console.error('❌ Error en logout:', error);
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const value: AuthContextType = {
+    user,
+    loading,
+    login,
+    loginAsDemo,
+    logout,
+    isAuthenticated: !!user
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        ...state,
-        login,
-        loginAsDemo,
-        logout
-      }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

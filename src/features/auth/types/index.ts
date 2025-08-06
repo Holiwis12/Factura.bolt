@@ -2,10 +2,10 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'software_owner' | 'company_owner' | 'employee' | 'demo';
-  companyId?: string;
-  companyName?: string;
-  isDemo?: boolean;
+  role: 'software_owner' | 'company_admin' | 'employee';
+  companyId: string | null;
+  companyName: string | null;
+  isDemo: boolean;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -16,12 +16,6 @@ export interface LoginCredentials {
   password: string;
 }
 
-export interface AuthState {
-  user: User | null;
-  loading: boolean;
-  error: string | null;
-}
-
 export interface AuthResponse {
   data?: User;
   error?: string;
@@ -29,8 +23,11 @@ export interface AuthResponse {
   token?: string;
 }
 
-export interface AuthContextType extends AuthState {
-  login: (email: string, password: string) => Promise<boolean>;
-  loginAsDemo: () => Promise<boolean>;
+export interface AuthContextType {
+  user: User | null;
+  loading: boolean;
+  login: (credentials: LoginCredentials) => Promise<void>;
+  loginAsDemo: () => Promise<void>;
   logout: () => Promise<void>;
+  isAuthenticated: boolean;
 }
